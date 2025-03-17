@@ -626,10 +626,10 @@ hr {
     <div class="right-side-panel">
         <img src="image-removebg-preview (14).png" alt="MoonFloki Logo" class="logo">
         <div class="social-links">
-            <a href="https://twitter.com/yourtwitter" target="_blank">🐦</a>
-            <a href="https://t.me/yourtelegram" target="_blank">📨</a>
+            <a href="https://twitter.com/yourtwitter" target="_blank">Twitter</a>
+            <a href="https://t.me/fundilemma" target="_blank">Telegram</a>
         </div>
-        <a href="https://your-buy-link.com" class="buy-link" target="_blank">Buy DILEMMA</a>
+        <a href="https://pump.fun/profile/5uMSM65rhZ88zC8g2kY9Kv6vv82gzy4x6C7HAZ5Bk2fz" class="buy-link" target="_blank">Buy DILEMMA</a>
     </div>
 
     <header>
@@ -749,260 +749,249 @@ hr {
         <p>© 2025 Fun dilemma. All rights reserved. Not financial advice!</p>
     </footer>
     <script>
-        // Global variables
-        let userWallet = null;
-        let dilemmas = [
-            { question: "What has a head, a tail, is brown, and has no legs?", answer: "penny" },
-            { question: "If you have me, you want to share me. If you share me, you don't have me. What am I?", answer: "secret" },
-            { question: "I'm tall when I'm young, and I'm short when I'm old. What am I?", answer: "candle" },
-            { question: "What is always in front of you but can't be seen?", answer: "future" },
-            { question: "What has many keys but can't open a single lock?", answer: "piano" },
-            { question: "What has a neck but no head?", answer: "bottle" },
-            { question: "What gets wet while drying?", answer: "towel" },
-            { question: "What goes up but never comes down?", answer: "age" },
-            { question: "What can you catch but not throw?", answer: "cold" },
-            { question: "What has teeth but can't eat?", answer: "comb" }
-        ];
-        let currentDilemmaIndex = 0;
-        let timeLeft = 15 * 60; // 15 minutes in seconds
-        let timerId = null;
-        let currentWinner = null;
-        let gameStarted = false;
-        let pastDilemmasList = [];
-        let onlinePlayers = Math.floor(Math.random() * 20) + 5; // Random number between 5-25
+    // Global variables
+    let userWallet = null;
+    let dilemmas = [
+        { question: "What has a head, a tail, is brown, and has no legs?", answer: "penny" },
+        { question: "If you have me, you want to share me. If you share me, you don't have me. What am I?", answer: "secret" },
+        { question: "I'm tall when I'm young, and I'm short when I'm old. What am I?", answer: "candle" },
+        { question: "What is always in front of you but can't be seen?", answer: "future" },
+        { question: "What has many keys but can't open a single lock?", answer: "piano" },
+        { question: "What has a neck but no head?", answer: "bottle" },
+        { question: "What gets wet while drying?", answer: "towel" },
+        { question: "What goes up but never comes down?", answer: "age" },
+        { question: "What can you catch but not throw?", answer: "cold" },
+        { question: "What has teeth but can't eat?", answer: "comb" }
+    ];
+    let currentDilemmaIndex = 0;
+    let timeLeft = 15 * 60; // 15 minutes in seconds
+    let timerId = null;
+    let currentWinner = null;
+    let gameStarted = false;
+    let pastDilemmasList = [];
+    let onlinePlayers = Math.floor(Math.random() * 20) + 5; // Random number between 5-25
 
-        // DOM Elements
-        const connectWalletBtn = document.getElementById('connectWalletBtn');
-        const bannerConnectBtn = document.getElementById('bannerConnectBtn');
-        const userAddressSpan = document.getElementById('userAddress');
-        const walletInfo = document.getElementById('walletInfo');
-        const walletBanner = document.getElementById('walletBanner');
-        const loginMessage = document.getElementById('loginMessage');
-        const countdownSpan = document.getElementById('countdown');
-        const dilemmaText = document.getElementById('dilemmaText');
-        const answerInput = document.getElementById('answerInput');
-        const submitAnswerBtn = document.getElementById('submitAnswerBtn');
-        const winnerInfo = document.getElementById('winnerInfo');
-        const winnerText = document.getElementById('winnerText');
-        const pastDilemmas = document.getElementById('pastDilemmas');
-        const playersOnlineSpan = document.getElementById('playersOnline');
+    // DOM Elements
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const userAddressSpan = document.getElementById('userAddress');
+    const walletInfo = document.getElementById('walletInfo');
+    const loginMessage = document.getElementById('loginMessage');
+    const countdownSpan = document.getElementById('countdown');
+    const dilemmaText = document.getElementById('dilemmaText');
+    const answerInput = document.getElementById('answerInput');
+    const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+    const winnerInfo = document.getElementById('winnerInfo');
+    const winnerText = document.getElementById('winnerText');
+    const pastDilemmas = document.getElementById('pastDilemmas');
+    const playersOnlineSpan = document.getElementById('playersOnline');
 
-        // Initialize players online display
-        playersOnlineSpan.textContent = onlinePlayers;
+    // Initialize players online display
+    playersOnlineSpan.textContent = onlinePlayers;
 
-        // Check if Phantom is installed
-        const isPhantomInstalled = window.solana && window.solana.isPhantom;
+    // Check if Phantom is installed
+    const isPhantomInstalled = () => {
+        return window.solana && window.solana.isPhantom;
+    };
 
-        // Set up initial UI state for non-connected users
-        function setupInitialUI() {
-            // Disable submit button for non-connected users
-            answerInput.disabled = true;
-            submitAnswerBtn.disabled = true;
-            
-            // Show the banner after scrolling a bit
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 200 && !userWallet) {
-                    walletBanner.classList.remove('hidden');
-                } else {
-                    walletBanner.classList.add('hidden');
-                }
-            });
-            
-            // Start the game to show content, even without wallet
-            if (!gameStarted) {
-                startGame();
-            }
+    // Set up initial UI state for non-connected users
+    function setupInitialUI() {
+        // Disable submit button for non-connected users
+        answerInput.disabled = true;
+        submitAnswerBtn.disabled = true;
+
+        // Start the game to show content, even without wallet
+        if (!gameStarted) {
+            startGame();
         }
+    }
 
-        // Function to connect to Phantom wallet
-        async function connectWallet() {
-            try {
-                if (!isPhantomInstalled) {
-                    alert("Phantom wallet is not installed. Please install it from https://phantom.app/");
-                    return;
-                }
-
-                // Connect to Phantom
-                const resp = await window.solana.connect();
-                userWallet = resp.publicKey.toString();
-                
-                // Update UI
-                userAddressSpan.textContent = shortenAddress(userWallet);
-                walletInfo.classList.remove('hidden');
-                walletBanner.classList.add('hidden');
-                loginMessage.classList.add('hidden');
-                connectWalletBtn.textContent = 'Wallet Connected';
-                connectWalletBtn.disabled = true;
-                
-                // Enable game interaction
-                answerInput.disabled = false;
-                submitAnswerBtn.disabled = false;
-                
-                // Increment online players
-                onlinePlayers++;
-                playersOnlineSpan.textContent = onlinePlayers;
-                
-                return true;
-            } catch (err) {
-                console.error('Error connecting to wallet:', err);
-                alert('Failed to connect wallet: ' + err.message);
-                return false;
-            }
-        }
-
-        // Function to shorten wallet address for display
-        function shortenAddress(address) {
-            return address.substring(0, 4) + '...' + address.substring(address.length - 4);
-        }
-
-        // Function to start the game
-        function startGame() {
-            gameStarted = true;
-            
-            // Load first dilemma
-            loadNewDilemma();
-            
-            // Start the countdown
-            updateCountdown();
-            timerId = setInterval(updateCountdown, 1000);
-            
-            // Simulate random player count changes
-            setInterval(() => {
-                const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
-                onlinePlayers = Math.max(5, onlinePlayers + change);
-                playersOnlineSpan.textContent = onlinePlayers;
-            }, 10000); // Every 10 seconds
-        }
-
-        // Function to update countdown timer
-        function updateCountdown() {
-            if (timeLeft <= 0) {
-                // Time's up - load new dilemma
-                timeLeft = 15 * 60; // Reset to 15 minutes
-                loadNewDilemma();
-                
-                // Hide winner info for new round
-                winnerInfo.classList.add('hidden');
-                currentWinner = null;
-            }
-            
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            countdownSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            timeLeft--;
-        }
-
-        // Function to load a new dilemma
-        function loadNewDilemma() {
-            // If we've used all dilemmas, start over
-            if (currentDilemmaIndex >= dilemmas.length) {
-                currentDilemmaIndex = 0;
-            }
-            
-            // Get current dilemma
-            const dilemma = dilemmas[currentDilemmaIndex];
-            dilemmaText.textContent = dilemma.question;
-            
-            // Add previous dilemma to past list if not first round
-            if (pastDilemmasList.length > 0) {
-                const lastDilemma = dilemmas[(currentDilemmaIndex === 0 ? dilemmas.length - 1 : currentDilemmaIndex - 1)];
-                
-                const pastEntry = document.createElement('div');
-                pastEntry.className = 'past-dilemma-item';
-                pastEntry.innerHTML = `
-                    <strong>Question:</strong> "${lastDilemma.question}"<br>
-                    <strong>Answer:</strong> "${lastDilemma.answer}"
-                `;
-                
-                if (pastDilemmas.children.length >= 5) {
-                    pastDilemmas.removeChild(pastDilemmas.firstChild);
-                }
-                pastDilemmas.appendChild(pastEntry);
-            }
-            
-            // Add current dilemma to history
-            pastDilemmasList.push(dilemma.question);
-            
-            // Increment for next time
-            currentDilemmaIndex++;
-            
-            // Reset input
-            answerInput.value = '';
-            
-            // Only enable input if wallet is connected
-            if (userWallet) {
-                answerInput.disabled = false;
-                submitAnswerBtn.disabled = false;
-            }
-        }
-
-        // Function to submit an answer
-        function submitAnswer() {
-            if (!userWallet) {
-                alert('Please connect your wallet first!');
+    // Function to connect to Phantom wallet
+    async function connectWallet() {
+        try {
+            if (!isPhantomInstalled()) {
+                alert("Phantom wallet is not installed. Please install it from https://phantom.app/");
                 return;
             }
-            
-            const userAnswer = answerInput.value.trim().toLowerCase();
-            const correctAnswer = dilemmas[currentDilemmaIndex > 0 ? currentDilemmaIndex - 1 : dilemmas.length - 1].answer.toLowerCase();
-            
-            if (userAnswer === correctAnswer) {
-                // Correct answer!
-                if (!currentWinner) {
-                    // First correct answer
-                    currentWinner = userWallet;
-                    winnerText.innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <span class="winner-icon">🏆</span>
-                            <div>
-                                Congratulations! Your address (${shortenAddress(userWallet)}) won 
-                                <span style="font-weight: bold; color: var(--accent);">1000 MoonFloki</span> tokens!
-                            </div>
-                        </div>
-                    `;
-                    winnerInfo.classList.remove('hidden');
-                    
-                    // Disable answer submission for this round
-                    answerInput.disabled = true;
-                    submitAnswerBtn.disabled = true;
-                    
-                    // Simulate token transfer (in a real app, this would call a contract)
-                    console.log(`Transferring 1000 MoonFloki to ${userWallet}`);
-                } else {
-                    alert('Correct answer, but someone already won this round!');
-                }
-            } else {
-                alert('Sorry, that\'s not the correct answer. Try again!');
-            }
+
+            // Connect to Phantom
+            const resp = await window.solana.connect();
+            userWallet = resp.publicKey.toString();
+
+            // Update UI
+            userAddressSpan.textContent = shortenAddress(userWallet);
+            walletInfo.classList.remove('hidden');
+            loginMessage.classList.add('hidden');
+            connectWalletBtn.textContent = 'Wallet Connected';
+            connectWalletBtn.disabled = true;
+
+            // Enable game interaction
+            answerInput.disabled = false;
+            submitAnswerBtn.disabled = false;
+
+            // Increment online players
+            onlinePlayers++;
+            playersOnlineSpan.textContent = onlinePlayers;
+
+            return true;
+        } catch (err) {
+            console.error('Error connecting to wallet:', err);
+            alert('Failed to connect wallet: ' + err.message);
+            return false;
+        }
+    }
+
+    // Function to shorten wallet address for display
+    function shortenAddress(address) {
+        return address.substring(0, 4) + '...' + address.substring(address.length - 4);
+    }
+
+    // Function to start the game
+    function startGame() {
+        gameStarted = true;
+
+        // Load first dilemma
+        loadNewDilemma();
+
+        // Start the countdown
+        updateCountdown();
+        timerId = setInterval(updateCountdown, 1000);
+
+        // Simulate random player count changes
+        setInterval(() => {
+            const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+            onlinePlayers = Math.max(5, onlinePlayers + change);
+            playersOnlineSpan.textContent = onlinePlayers;
+        }, 10000); // Every 10 seconds
+    }
+
+    // Function to update countdown timer
+    function updateCountdown() {
+        if (timeLeft <= 0) {
+            // Time's up - load new dilemma
+            timeLeft = 15 * 60; // Reset to 15 minutes
+            loadNewDilemma();
+
+            // Hide winner info for new round
+            winnerInfo.classList.add('hidden');
+            currentWinner = null;
         }
 
-        // Event Listeners
-        connectWalletBtn.addEventListener('click', connectWallet);
-        bannerConnectBtn.addEventListener('click', connectWallet);
-        submitAnswerBtn.addEventListener('click', submitAnswer);
-        
-        // Allow pressing Enter to submit answer
-        answerInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !answerInput.disabled) {
-                submitAnswer();
-            }
-        });
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        countdownSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timeLeft--;
+    }
 
-        // Check if wallet is already connected (Phantom feature)
-        window.onload = async function() {
-            try {
-                if (isPhantomInstalled && window.solana.isConnected) {
-                    await connectWallet();
-                } else {
-                    // Set up the UI for non-connected users
-                    setupInitialUI();
-                }
-            } catch (error) {
-                console.error('Error checking connection:', error);
-                // Still setup the UI even if there's an error
+    // Function to load a new dilemma
+    function loadNewDilemma() {
+        // If we've used all dilemmas, start over
+        if (currentDilemmaIndex >= dilemmas.length) {
+            currentDilemmaIndex = 0;
+        }
+
+        // Get current dilemma
+        const dilemma = dilemmas[currentDilemmaIndex];
+        dilemmaText.textContent = dilemma.question;
+
+        // Add previous dilemma to past list if not first round
+        if (pastDilemmasList.length > 0) {
+            const lastDilemma = dilemmas[(currentDilemmaIndex === 0 ? dilemmas.length - 1 : currentDilemmaIndex - 1)];
+
+            const pastEntry = document.createElement('div');
+            pastEntry.className = 'past-dilemma-item';
+            pastEntry.innerHTML = `
+                <strong>Question:</strong> "${lastDilemma.question}"<br>
+                <strong>Answer:</strong> "${lastDilemma.answer}"
+            `;
+
+            if (pastDilemmas.children.length >= 5) {
+                pastDilemmas.removeChild(pastDilemmas.firstChild);
+            }
+            pastDilemmas.appendChild(pastEntry);
+        }
+
+        // Add current dilemma to history
+        pastDilemmasList.push(dilemma.question);
+
+        // Increment for next time
+        currentDilemmaIndex++;
+
+        // Reset input
+        answerInput.value = '';
+
+        // Only enable input if wallet is connected
+        if (userWallet) {
+            answerInput.disabled = false;
+            submitAnswerBtn.disabled = false;
+        }
+    }
+
+    // Function to submit an answer
+    function submitAnswer() {
+        if (!userWallet) {
+            alert('Please connect your wallet first!');
+            return;
+        }
+
+        const userAnswer = answerInput.value.trim().toLowerCase();
+        const correctAnswer = dilemmas[currentDilemmaIndex > 0 ? currentDilemmaIndex - 1 : dilemmas.length - 1].answer.toLowerCase();
+
+        if (userAnswer === correctAnswer) {
+            // Correct answer!
+            if (!currentWinner) {
+                // First correct answer
+                currentWinner = userWallet;
+                winnerText.innerHTML = `
+                    <div style="display: flex; align-items: center;">
+                        <span class="winner-icon">🏆</span>
+                        <div>
+                            Congratulations! Your address (${shortenAddress(userWallet)}) won 
+                            <span style="font-weight: bold; color: var(--accent);">1000 MoonFloki</span> tokens!
+                        </div>
+                    </div>
+                `;
+                winnerInfo.classList.remove('hidden');
+
+                // Disable answer submission for this round
+                answerInput.disabled = true;
+                submitAnswerBtn.disabled = true;
+
+                // Simulate token transfer (in a real app, this would call a contract)
+                console.log(`Transferring 1000 MoonFloki to ${userWallet}`);
+            } else {
+                alert('Correct answer, but someone already won this round!');
+            }
+        } else {
+            alert('Sorry, that\'s not the correct answer. Try again!');
+        }
+    }
+
+    // Event Listeners
+    connectWalletBtn.addEventListener('click', connectWallet);
+    submitAnswerBtn.addEventListener('click', submitAnswer);
+
+    // Allow pressing Enter to submit answer
+    answerInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !answerInput.disabled) {
+            submitAnswer();
+        }
+    });
+
+    // Check if wallet is already connected (Phantom feature)
+    window.onload = async function() {
+        try {
+            if (isPhantomInstalled() && window.solana.isConnected) {
+                await connectWallet();
+            } else {
+                // Set up the UI for non-connected users
                 setupInitialUI();
             }
-        };
-    </script>
+        } catch (error) {
+            console.error('Error checking connection:', error);
+            // Still setup the UI even if there's an error
+            setupInitialUI();
+        }
+    };
+</script>
 </body>
 </html>
