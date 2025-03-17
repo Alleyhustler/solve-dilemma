@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoonFloki Dilemma Game</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/solana-web3.js/1.75.0/index.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Langar&display=swap" rel="stylesheet">
     <style>
 :root {
-    --primary: #3772FF;
-    --primary-light: #6E94FF;
-    --primary-dark: #2854CC;
-    --secondary: #0ECB81;
-    --accent: #F7931A;
-    --background: #0B0E11;
-    --card-bg: #1E2329;
+    --primary: #7b7c7f;
+    --primary-light: #e8e8e8;
+    --primary-dark: #7a9eff;
+    --secondary: #e5fff5;
+    --accent: #000000;
+    --background: #454545;
+    --card-bg: #707070;
     --card-bg-hover: #2B3139;
     --border-color: #2D3035;
     --text: #EAECEF;
@@ -31,7 +32,7 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: "Langar", system-ui;
     background-color: var(--background);
     color: var(--text);
     line-height: 1.5;
@@ -55,7 +56,7 @@ h1 {
     font-size: 24px;
     font-weight: 600;
     color: var(--text);
-    margin: 0;
+    margin: 10px;
     letter-spacing: -0.5px;
 }
 
@@ -75,6 +76,8 @@ button {
     font-size: 14px;
     transition: all 0.2s ease;
     letter-spacing: 0.3px;
+    font-family: "Langar", system-ui;
+
 }
 
 button:disabled {
@@ -159,7 +162,7 @@ button:disabled {
     border-radius: 4px;
     font-size: 14px;
     color: var(--text);
-    font-family: 'Roboto Mono', monospace;
+    font-family: "Langar", system-ui;
     border: 1px solid var(--border-color);
 }
 
@@ -217,7 +220,7 @@ input:focus {
     font-size: 20px;
     font-weight: 600;
     color: var(--text);
-    font-family: 'Roboto Mono', monospace;
+    font-family: "Langar", system-ui;
     background-color: rgba(45, 48, 53, 0.5);
     padding: 8px 16px;
     border-radius: 4px;
@@ -324,7 +327,7 @@ input:focus {
     font-size: 20px;
     font-weight: 600;
     color: var(--text);
-    font-family: 'Inter', sans-serif;
+    font-family: "Langar", system-ui;
 }
 
 .login-message {
@@ -451,7 +454,7 @@ footer {
 
 /* Market-like data styling */
 .data-value {
-    font-family: 'Roboto Mono', monospace;
+    font-family: "Langar", system-ui;
 }
 
 /* Two-column layout for desktop */
@@ -567,13 +570,73 @@ hr {
 .btn-primary:active, .btn-secondary:active {
     transform: translateY(1px);
     box-shadow: none;
+    font-family: "Langar", system-ui;
+
 }
+
+        /* New styles for the right-side panel */
+        .right-side-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .logo {
+            height: 300px;
+            width: auto;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        .buy-link {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .buy-link:hover {
+            background-color: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
+    <div class="right-side-panel">
+        <img src="image-removebg-preview (14).png" alt="MoonFloki Logo" class="logo">
+        <div class="social-links">
+            <a href="https://twitter.com/yourtwitter" target="_blank">🐦</a>
+            <a href="https://t.me/yourtelegram" target="_blank">📨</a>
+        </div>
+        <a href="https://your-buy-link.com" class="buy-link" target="_blank">Buy DILEMMA</a>
+    </div>
+
     <header>
-        <h1>MoonFloki Dilemma Game</h1>
-        <p class="tag-line">Solve dilemmas, win tokens, get rich!</p>
+        <div class="logo-container">
+            <h1>Fun Dilemma </h1>
+            <p class="tag-line">Solve dilemmas, win tokens, get rich!</p>
+        </div>
     </header>
     
     <div class="container">
@@ -595,7 +658,7 @@ hr {
             <div class="game-column">
                 <div class="about-section" id="aboutSection">
                     <h2>How It Works</h2>
-                    <p>Every 15 minutes, a new dilemma is posted. Be the first to solve it correctly and win 1000 MoonFloki tokens!</p>
+                    <p>Every 15 minutes, a new dilemma is posted. Be the first to solve it correctly and win 1000 DILEMMA tokens!</p>
                     
                     <div class="feature-grid">
                         <div class="feature-card">
@@ -611,7 +674,7 @@ hr {
                         <div class="feature-card">
                             <div class="feature-icon">💰</div>
                             <h3>Win Rewards</h3>
-                            <p>Earn MoonFloki tokens for correct answers</p>
+                            <p>Earn DILEMMA tokens for correct answers</p>
                         </div>
                     </div>
                 </div>
@@ -627,7 +690,7 @@ hr {
                     <div class="status-card">
                         <p>Current pot</p>
                         <div class="status-value">
-                            <span id="potAmount">1000</span> <span class="token-name">MoonFloki</span>
+                            <span id="potAmount">1000</span> <span class="token-name">DILEMMA</span>
                         </div>
                     </div>
                     
@@ -683,9 +746,8 @@ hr {
     </div>
 
     <footer>
-        <p>© 2025 MoonFloki. All rights reserved. Not financial advice!</p>
+        <p>© 2025 Fun dilemma. All rights reserved. Not financial advice!</p>
     </footer>
-
     <script>
         // Global variables
         let userWallet = null;
