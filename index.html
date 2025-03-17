@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoonFloki Dilemma Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/solana-web3.js/1.75.0/index.min.js"></script>
+    <style>
+:root {
+    --primary: #3772FF;
+    --primary-light: #6E94FF;
+    --primary-dark: #2854CC;
+    --secondary: #0ECB81;
+    --accent: #F7931A;
+    --background: #0B0E11;
+    --card-bg: #1E2329;
+    --card-bg-hover: #2B3139;
+    --border-color: #2D3035;
+    --text: #EAECEF;
+    --text-secondary: #848E9C;
+    --text-tertiary: #5E6673;
+    --success: #0ECB81;
+    --error: #F6465D;
+    --warning: #F0B90B;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    line-height: 1.5;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+    letter-spacing: 0.2px;
+}
+
+header {
+    text-align: left;
+    margin-bottom: 40px;
+    padding: 30px 40px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.tag-line {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+button {
+    cursor: pointer;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(55, 114, 255, 0.2);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    color: #000;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #0AB172;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14, 203, 129, 0.2);
+}
+
+.container {
+    padding: 0 40px 40px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    background-color: var(--card-bg-hover);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h2, .card-header h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+    margin: 0;
+}
+
+.wallet-section {
+    text-align: right;
+    margin-bottom: 40px;
+}
+
+.wallet-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.address-badge {
+    background-color: var(--card-bg);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: 'Roboto Mono', monospace;
+    border: 1px solid var(--border-color);
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--success);
+    margin-right: 6px;
+}
+
+.hidden {
+    display: none;
+}
+
+input {
+    width: 100%;
+    padding: 14px 16px;
+    margin: 10px 0;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: rgba(45, 48, 53, 0.6);
+    color: var(--text);
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px rgba(55, 114, 255, 0.2);
+    background-color: rgba(45, 48, 53, 0.8);
+}
+
+.dilemma-card {
+    background-color: var(--card-bg);
+    border-left: 3px solid var(--primary);
+}
+
+.dilemma-text {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+.countdown-container {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.countdown {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Roboto Mono', monospace;
+    background-color: rgba(45, 48, 53, 0.5);
+    padding: 8px 16px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.pot-display {
+    color: var(--accent);
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.winner-card {
+    background-color: rgba(14, 203, 129, 0.05);
+    border-left: 3px solid var(--success);
+}
+
+.winner-icon {
+    font-size: 18px;
+    margin-right: 12px;
+}
+
+.past-dilemmas {
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-tertiary) var(--card-bg);
+}
+
+.past-dilemmas::-webkit-scrollbar {
+    width: 6px;
+}
+
+.past-dilemmas::-webkit-scrollbar-track {
+    background: var(--card-bg);
+}
+
+.past-dilemmas::-webkit-scrollbar-thumb {
+    background-color: var(--text-tertiary);
+    border-radius: 6px;
+}
+
+.past-dilemma-item {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.past-dilemma-item:hover {
+    background-color: rgba(45, 48, 53, 0.3);
+}
+
+.past-dilemma-item:last-child {
+    border-bottom: none;
+}
+
+.answer-section {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.answer-section input {
+    flex-grow: 1;
+    margin: 0;
+}
+
+.token-name {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.game-status {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.status-card {
+    padding: 20px;
+    text-align: center;
+    background-color: var(--card-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.status-card p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.status-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+}
+
+.login-message {
+    background-color: rgba(247, 147, 26, 0.05);
+    border-left: 3px solid var(--warning);
+    padding: 16px;
+    margin-top: 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.login-message span {
+    font-size: 18px;
+    margin-right: 12px;
+}
+
+.wallet-banner {
+    position: sticky;
+    top: 0;
+    background-color: rgba(11, 14, 17, 0.95);
+    padding: 12px 40px;
+    text-align: center;
+    z-index: 100;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+}
+
+.wallet-banner p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-tertiary);
+    font-size: 13px;
+}
+
+.info-section {
+    margin: 40px 0;
+}
+
+.about-section {
+    background-color: rgba(55, 114, 255, 0.03);
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+}
+
+.about-section h2 {
+    color: var(--text);
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.feature-card {
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.feature-card h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* Logo styling */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Timer pulse animation */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+#countdown {
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Market-like data styling */
+.data-value {
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* Two-column layout for desktop */
+.game-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.game-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.bottom-content {
+    grid-column: 1 / span 2;
+    margin-top: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+    
+    .wallet-section {
+        text-align: left;
+        margin-top: 20px;
+    }
+    
+    .container {
+        padding: 0 20px 20px;
+    }
+    
+    .game-status {
+        grid-template-columns: 1fr;
+    }
+    
+    .answer-section {
+        flex-direction: column;
+    }
+    
+    .wallet-banner {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 20px;
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .bottom-content {
+        grid-column: 1;
+    }
+}
+
+/* Custom scrollbar for entire page */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--background);
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 4px;
+}
+
+/* Add depth to cards with subtle gradients */
+.card {
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0.01), rgba(0,0,0,0.05));
+}
+
+/* Add subtle hover effects to interactive elements */
+input:hover:not(:focus), .status-card:hover, .feature-card:hover {
+    border-color: rgba(55, 114, 255, 0.3);
+}
+
+/* Better visual hierarchy */
+h1, h2, h3 {
+    letter-spacing: -0.3px;
+}
+
+/* Add depth to the UI */
+.container {
+    position: relative;
+}
+
+/* Style for correct answers */
+.correct-answer {
+    color: var(--success);
+    font-weight: 500;
+}
+
+/* Clean dividers */
+hr {
+    border: none;
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 24px 0;
+}
+
+/* Active state for buttons */
+.btn-primary:active, .btn-secondary:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MoonFloki Dilemma Game</h1>
+        <p class="tag-line">Solve dilemmas, win tokens, get rich!</p>
+    </header>
+    
+    <div class="container">
+
+        
+        <div class="wallet-section" id="walletSection">
+            <button id="connectWalletBtn" class="btn-primary">Connect Phantom Wallet</button>
+            
+            <div id="walletInfo" class="wallet-info hidden">
+                <div class="status-indicator"></div>
+                <p>Connected:</p>
+                <span id="userAddress" class="address-badge"></span>
+            </div>
+        </div>
+
+        <!-- Game content in 2-column layout -->
+        <div class="game-layout">
+            <!-- Left column: About section -->
+            <div class="game-column">
+                <div class="about-section" id="aboutSection">
+                    <h2>How It Works</h2>
+                    <p>Every 15 minutes, a new dilemma is posted. Be the first to solve it correctly and win 1000 MoonFloki tokens!</p>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🧩</div>
+                            <h3>Solve Dilemmas</h3>
+                            <p>Use your wit to solve fun riddles and puzzles</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">⏱️</div>
+                            <h3>Race Against Time</h3>
+                            <p>New dilemma every 15 minutes</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">💰</div>
+                            <h3>Win Rewards</h3>
+                            <p>Earn MoonFloki tokens for correct answers</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-status">
+                    <div class="status-card">
+                        <p>Next dilemma in</p>
+                        <div class="status-value">
+                            <span id="countdown">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="status-card">
+                        <p>Current pot</p>
+                        <div class="status-value">
+                            <span id="potAmount">1000</span> <span class="token-name">MoonFloki</span>
+                        </div>
+                    </div>
+                    
+                    <div class="status-card">
+                        <p>Players online</p>
+                        <div class="status-value">
+                            <span id="playersOnline">15</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right column: Current dilemma -->
+            <div class="game-column">
+                <div id="currentDilemma" class="card dilemma-card">
+                    <div class="card-header">
+                        <h2>Current Dilemma</h2>
+                    </div>
+                    
+                    <p id="dilemmaText" class="dilemma-text">Loading dilemma...</p>
+                    
+                    <div class="answer-section" id="answerSection">
+                        <input type="text" id="answerInput" placeholder="Your answer">
+                        <button id="submitAnswerBtn" class="btn-secondary">Submit Answer</button>
+                    </div>
+                    
+                    <div id="loginMessage" class="login-message">
+                        <span>🔒</span>
+                        <p>Connect your Phantom wallet to submit answers and win tokens!</p>
+                    </div>
+                </div>
+                
+                <div id="winnerInfo" class="card winner-card hidden">
+                    <div class="card-header">
+                        <h3>Round Winner</h3>
+                    </div>
+                    <p id="winnerText"></p>
+                </div>
+            </div>
+            
+            <!-- Bottom content spanning both columns -->
+            <div class="bottom-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Past Dilemmas</h3>
+                    </div>
+                    <div class="past-dilemmas" id="pastDilemmas">
+                        <!-- Past dilemmas will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 MoonFloki. All rights reserved. Not financial advice!</p>
+    </footer>
+
+    <script>
+        // Global variables
+        let userWallet = null;
+        let dilemmas = [
+            { question: "What has a head, a tail, is brown, and has no legs?", answer: "penny" },
+            { question: "If you have me, you want to share me. If you share me, you don't have me. What am I?", answer: "secret" },
+            { question: "I'm tall when I'm young, and I'm short when I'm old. What am I?", answer: "candle" },
+            { question: "What is always in front of you but can't be seen?", answer: "future" },
+            { question: "What has many keys but can't open a single lock?", answer: "piano" },
+            { question: "What has a neck but no head?", answer: "bottle" },
+            { question: "What gets wet while drying?", answer: "towel" },
+            { question: "What goes up but never comes down?", answer: "age" },
+            { question: "What can you catch but not throw?", answer: "cold" },
+            { question: "What has teeth but can't eat?", answer: "comb" }
+        ];
+        let currentDilemmaIndex = 0;
+        let timeLeft = 15 * 60; // 15 minutes in seconds
+        let timerId = null;
+        let currentWinner = null;
+        let gameStarted = false;
+        let pastDilemmasList = [];
+        let onlinePlayers = Math.floor(Math.random() * 20) + 5; // Random number between 5-25
+
+        // DOM Elements
+        const connectWalletBtn = document.getElementById('connectWalletBtn');
+        const bannerConnectBtn = document.getElementById('bannerConnectBtn');
+        const userAddressSpan = document.getElementById('userAddress');
+        const walletInfo = document.getElementById('walletInfo');
+        const walletBanner = document.getElementById('walletBanner');
+        const loginMessage = document.getElementById('loginMessage');
+        const countdownSpan = document.getElementById('countdown');
+        const dilemmaText = document.getElementById('dilemmaText');
+        const answerInput = document.getElementById('answerInput');
+        const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+        const winnerInfo = document.getElementById('winnerInfo');
+        const winnerText = document.getElementById('winnerText');
+        const pastDilemmas = document.getElementById('pastDilemmas');
+        const playersOnlineSpan = document.getElementById('playersOnline');
+
+        // Initialize players online display
+        playersOnlineSpan.textContent = onlinePlayers;
+
+        // Check if Phantom is installed
+        const isPhantomInstalled = window.solana && window.solana.isPhantom;
+
+        // Set up initial UI state for non-connected users
+        function setupInitialUI() {
+            // Disable submit button for non-connected users
+            answerInput.disabled = true;
+            submitAnswerBtn.disabled = true;
+            
+            // Show the banner after scrolling a bit
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 200 && !userWallet) {
+                    walletBanner.classList.remove('hidden');
+                } else {
+                    walletBanner.classList.add('hidden');
+                }
+            });
+            
+            // Start the game to show content, even without wallet
+            if (!gameStarted) {
+                startGame();
+            }
+        }
+
+        // Function to connect to Phantom wallet
+        async function connectWallet() {
+            try {
+                if (!isPhantomInstalled) {
+                    alert("Phantom wallet is not installed. Please install it from https://phantom.app/");
+                    return;
+                }
+
+                // Connect to Phantom
+                const resp = await window.solana.connect();
+                userWallet = resp.publicKey.toString();
+                
+                // Update UI
+                userAddressSpan.textContent = shortenAddress(userWallet);
+                walletInfo.classList.remove('hidden');
+                walletBanner.classList.add('hidden');
+                loginMessage.classList.add('hidden');
+                connectWalletBtn.textContent = 'Wallet Connected';
+                connectWalletBtn.disabled = true;
+                
+                // Enable game interaction
+                answerInput.disabled = false;
+                submitAnswerBtn.disabled = false;
+                
+                // Increment online players
+                onlinePlayers++;
+                playersOnlineSpan.textContent = onlinePlayers;
+                
+                return true;
+            } catch (err) {
+                console.error('Error connecting to wallet:', err);
+                alert('Failed to connect wallet: ' + err.message);
+                return false;
+            }
+        }
+
+        // Function to shorten wallet address for display
+        function shortenAddress(address) {
+            return address.substring(0, 4) + '...' + address.substring(address.length - 4);
+        }
+
+        // Function to start the game
+        function startGame() {
+            gameStarted = true;
+            
+            // Load first dilemma
+            loadNewDilemma();
+            
+            // Start the countdown
+            updateCountdown();
+            timerId = setInterval(updateCountdown, 1000);
+            
+            // Simulate random player count changes
+            setInterval(() => {
+                const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+                onlinePlayers = Math.max(5, onlinePlayers + change);
+                playersOnlineSpan.textContent = onlinePlayers;
+            }, 10000); // Every 10 seconds
+        }
+
+        // Function to update countdown timer
+        function updateCountdown() {
+            if (timeLeft <= 0) {
+                // Time's up - load new dilemma
+                timeLeft = 15 * 60; // Reset to 15 minutes
+                loadNewDilemma();
+                
+                // Hide winner info for new round
+                winnerInfo.classList.add('hidden');
+                currentWinner = null;
+            }
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            timeLeft--;
+        }
+
+        // Function to load a new dilemma
+        function loadNewDilemma() {
+            // If we've used all dilemmas, start over
+            if (currentDilemmaIndex >= dilemmas.length) {
+                currentDilemmaIndex = 0;
+            }
+            
+            // Get current dilemma
+            const dilemma = dilemmas[currentDilemmaIndex];
+            dilemmaText.textContent = dilemma.question;
+            
+            // Add previous dilemma to past list if not first round
+            if (pastDilemmasList.length > 0) {
+                const lastDilemma = dilemmas[(currentDilemmaIndex === 0 ? dilemmas.length - 1 : currentDilemmaIndex - 1)];
+                
+                const pastEntry = document.createElement('div');
+                pastEntry.className = 'past-dilemma-item';
+                pastEntry.innerHTML = `
+                    <strong>Question:</strong> "${lastDilemma.question}"<br>
+                    <strong>Answer:</strong> "${lastDilemma.answer}"
+                `;
+                
+                if (pastDilemmas.children.length >= 5) {
+                    pastDilemmas.removeChild(pastDilemmas.firstChild);
+                }
+                pastDilemmas.appendChild(pastEntry);
+            }
+            
+            // Add current dilemma to history
+            pastDilemmasList.push(dilemma.question);
+            
+            // Increment for next time
+            currentDilemmaIndex++;
+            
+            // Reset input
+            answerInput.value = '';
+            
+            // Only enable input if wallet is connected
+            if (userWallet) {
+                answerInput.disabled = false;
+                submitAnswerBtn.disabled = false;
+            }
+        }
+
+        // Function to submit an answer
+        function submitAnswer() {
+            if (!userWallet) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+            
+            const userAnswer = answerInput.value.trim().toLowerCase();
+            const correctAnswer = dilemmas[currentDilemmaIndex > 0 ? currentDilemmaIndex - 1 : dilemmas.length - 1].answer.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                // Correct answer!
+                if (!currentWinner) {
+                    // First correct answer
+                    currentWinner = userWallet;
+                    winnerText.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <span class="winner-icon">🏆</span>
+                            <div>
+                                Congratulations! Your address (${shortenAddress(userWallet)}) won 
+                                <span style="font-weight: bold; color: var(--accent);">1000 MoonFloki</span> tokens!
+                            </div>
+                        </div>
+                    `;
+                    winnerInfo.classList.remove('hidden');
+                    
+                    // Disable answer submission for this round
+                    answerInput.disabled = true;
+                    submitAnswerBtn.disabled = true;
+                    
+                    // Simulate token transfer (in a real app, this would call a contract)
+                    console.log(`Transferring 1000 MoonFloki to ${userWallet}`);
+                } else {
+                    alert('Correct answer, but someone already won this round!');
+                }
+            } else {
+                alert('Sorry, that\'s not the correct answer. Try again!');
+            }
+        }
+
+        // Event Listeners
+        connectWalletBtn.addEventListener('click', connectWallet);
+        bannerConnectBtn.addEventListener('click', connectWallet);
+        submitAnswerBtn.addEventListener('click', submitAnswer);
+        
+        // Allow pressing Enter to submit answer
+        answerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !answerInput.disabled) {
+                submitAnswer();
+            }
+        });
+
+        // Check if wallet is already connected (Phantom feature)
+        window.onload = async function() {
+            try {
+                if (isPhantomInstalled && window.solana.isConnected) {
+                    await connectWallet();
+                } else {
+                    // Set up the UI for non-connected users
+                    setupInitialUI();
+                }
+            } catch (error) {
+                console.error('Error checking connection:', error);
+                // Still setup the UI even if there's an error
+                setupInitialUI();
+            }
+        };
+    </script>
+</body>
+</html>
